@@ -8,16 +8,21 @@
 import subprocess, sys, os, time, shutil, eyed3
 from threading import BrokenBarrierError
 from urllib.request import urlopen
+from pathlib import Path
 
 # must copy over example_config.py to config.py and populate
 from config import bearertoken, playlistid
-
 import requests
 from requests.structures import CaseInsensitiveDict
+home_dir = Path.home()
 
 # Setup variables
-piezoStorageLocation = '/Users/jamescampbell/Music/Piezo/'
-ripStorageLocation   = '/Users/jamescampbell/Music/Ripped/'
+piezoStorageLocation = f'{home_dir}/Piezo/'
+ripStorageLocation   = f'{home_dir}/Ripped/'
+if not os.path.exists(piezoStorageLocation):
+    os.makedirs(piezoStorageLocation)
+if not os.path.existsripStorageLocation):
+    os.makedirs(ripStorageLocation)
 playlisturl = f"https://api.spotify.com/v1/playlists/{playlistid}/tracks"
 
 # Clear all previous recordings if they exist
@@ -26,7 +31,10 @@ for f in os.listdir(piezoStorageLocation):
 
 
 def getTrackIds(bearertoken, playlisturl) -> set():
-    """Get trackids list from playlist id"""
+    """Get trackids list from playlist id
+    
+    Returns: set() of trackids
+    """
     trackids = []
     headers = CaseInsensitiveDict()
     headers["Accept"] = "application/json"
@@ -40,8 +48,8 @@ def getTrackIds(bearertoken, playlisturl) -> set():
     return set(trackids)
 
 
-
 def main():
+    """Get tracks from playlist and write the mp3s out to disk."""
     trackids = getTrackIds(bearertoken, playlisturl)
     for trackid in trackids:
         # Tell Spotify to pause, tell Piezo to record, tell Spotify to play a specified song
@@ -49,7 +57,6 @@ def main():
         time.sleep(.300)
         subprocess.Popen('osascript -e "activate application \\"Piezo\\"" -e "tell application \\"System Events\\"" -e "keystroke \\"r\\" using {command down}" -e "end tell"', shell=True, stdout=subprocess.PIPE).stdout.read()
         subprocess.Popen('osascript -e "tell application \\"Spotify\\"" -e "play track \\"'+trackid+'\\"" -e "end tell"', shell=True, stdout=subprocess.PIPE).stdout.read()
-
         time.sleep(1)
         print(f"recording {trackid}")
         # Get the artist name, track name, album name and album artwork URL from Spotify
@@ -89,7 +96,6 @@ def main():
         musicFile.tag.artist = artist
         musicFile.tag.album  = album
         musicFile.tag.title  = track
-
         musicFile.tag.save()
         continue
 

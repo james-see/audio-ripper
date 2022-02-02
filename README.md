@@ -18,8 +18,8 @@ I needed to get mp3s to my Light Phone https://www.thelightphone.com
 6. put the playlist id from step 5 in thr config.py file replacing the example variable
 7. Go https://developer.spotify.com/console/get-playlist-tracks/ and generate a bearer token. (You may have to do it twice, errors first time from Brave) Copy the token from the right column and paste it into the config.py replacing the example token
 8. By default the files are stored at {your home directory}/Ripped/
-9. Run `pip3 install -f requirements.txt`
-10. Run `python3 recordtracks.py` and wait for it to finish. You will see it running.
+9. Run `pip3 install -r requirements.txt`
+10. Run `python3 recordsongs.py` and wait for it to finish. You will see it running.
 
 ## questions / issues?
 

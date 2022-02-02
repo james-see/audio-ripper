@@ -1,0 +1,2 @@
+eyed3
+requests
