@@ -18,6 +18,7 @@ I needed to get mp3s to my Light Phone https://www.thelightphone.com
 6. put the playlist id from step 5 in thr config.py file replacing the example variable
 7. Go https://developer.spotify.com/console/get-playlist-tracks/ and generate a bearer token. (You may have to do it twice, errors first time from Brave) Copy the token from the right column and paste it into the config.py replacing the example token
 8. By default the files are stored at {your home directory}/Ripped/
+9. Set the save directory in the Piezo app to be {your home directory}/Piezo and create it if it does not exist
 9. Run `pip3 install -r requirements.txt`
 10. Run `python3 recordsongs.py` and wait for it to finish. You will see it running.
 

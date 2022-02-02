@@ -21,7 +21,7 @@ piezoStorageLocation = f'{home_dir}/Piezo/'
 ripStorageLocation   = f'{home_dir}/Ripped/'
 if not os.path.exists(piezoStorageLocation):
     os.makedirs(piezoStorageLocation)
-if not os.path.existsripStorageLocation):
+if not os.path.exists(ripStorageLocation):
     os.makedirs(ripStorageLocation)
 playlisturl = f"https://api.spotify.com/v1/playlists/{playlistid}/tracks"
 
@@ -76,22 +76,37 @@ def main():
         subprocess.Popen('osascript -e "activate application \\"Piezo\\"" -e "tell application \\"System Events\\"" -e "keystroke \\"r\\" using {command down}" -e "end tell"', shell=True, stdout=subprocess.PIPE).stdout.read()
 
         time.sleep(.500)
+        # clean up crap chars
+        crap = ["(", ")", ".", "'", " "]
+        updatedartist = artist
+        updatedalbum = album
+        updatedtrack = track
+        for item in crap:
+            if item in artist:
+                updatedartist = artist.replace(item, "_")
+                updatedartist = artist.strip()
+            if item in album:
+                updatedalbum = album.replace(item, "_")
+                updatedalbum = album.strip()
+            if item in track:
+                updatedtrack = track.replace(item, "_")
+                updatedtrack = track.strip()
 
         # Create directory for the artist
-        if not os.path.exists(ripStorageLocation+artist):
-            os.makedirs(ripStorageLocation+artist)
+        if not os.path.exists(ripStorageLocation+updatedartist):
+            os.makedirs(ripStorageLocation+updatedartist)
 
         # Create directory for the album
-        if not os.path.exists(ripStorageLocation+artist+"/"+album):
-            os.makedirs(ripStorageLocation+artist+"/"+album)
+        if not os.path.exists(ripStorageLocation+updatedartist+"/"+updatedalbum):
+            os.makedirs(ripStorageLocation+updatedartist+"/"+updatedalbum)
 
         # Move MP3 file from Piezo folder to the folder containing rips.
         for f in os.listdir(piezoStorageLocation):
                 if f.endswith(".mp3"):
-                    shutil.move(piezoStorageLocation+f, ripStorageLocation+artist+"/"+album+"/"+track+".mp3")
+                    shutil.move(piezoStorageLocation+f, ripStorageLocation+updatedartist+"/"+updatedalbum+"/"+updatedtrack+".mp3")
 
         # Set and/or update ID3 information
-        musicFile = eyed3.load(ripStorageLocation+artist+"/"+album+"/"+track+".mp3")
+        musicFile = eyed3.load(ripStorageLocation+updatedartist+"/"+updatedalbum+"/"+updatedtrack+".mp3")
         musicFile.tag.images.set(3, artworkData, "image/jpeg", trackid)
         musicFile.tag.artist = artist
         musicFile.tag.album  = album
